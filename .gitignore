@@ -1,0 +1,37 @@
+# Local environment and secrets
+.env
+.env.*
+!.env.example
+!.env.*.example
+
+# Python
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# Local databases and runtime files
+*.sqlite
+*.sqlite3
+*.db
+*.db-*
+*.sqlite-*
+*.log
+
+# Node / frontend build output
+node_modules/
+web/dist/
+web/.vite/
+
+# Editor and operating-system files
+.idea/
+.DS_Store
+Thumbs.db
+Desktop.ini

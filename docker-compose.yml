@@ -1,0 +1,53 @@
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.3.0
+    command: ["start-dev", "--http-port=8080"]
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:-admin}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-local-only-change-me}
+      KC_HEALTH_ENABLED: "true"
+      KC_HOSTNAME: http://localhost:8080
+    ports:
+      - "8080:8080"
+    volumes:
+      - keycloak_data:/opt/keycloak/data
+    healthcheck:
+      test: ["CMD-SHELL", "bash -c '</dev/tcp/127.0.0.1/9000'"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+    restart: unless-stopped
+
+  auditdex:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    environment:
+      AUDITDEX_DB: /data/auditdex.sqlite3
+      OIDC_ISSUER: http://localhost:8080/realms/master
+      OIDC_DISCOVERY_URL: http://keycloak:8080/realms/master/.well-known/openid-configuration
+      OIDC_JWKS_URI: http://keycloak:8080/realms/master/protocol/openid-connect/certs
+      OIDC_AUDIENCE: auditdex-api
+      OIDC_TENANT_CLAIM: tenant_id
+      OIDC_CLIENT_ID: ${OIDC_CLIENT_ID:-your-local-spa-client-name}
+      OIDC_REDIRECT_URI: ${OIDC_REDIRECT_URI:-http://127.0.0.1:8017/}
+      KEYCLOAK_URL: http://keycloak:8080
+      KEYCLOAK_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME:-admin}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD:-local-only-change-me}
+    ports:
+      - "8017:8000"
+    volumes:
+      - auditdex_data:/data
+    depends_on:
+      keycloak:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=3)"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    restart: unless-stopped
+
+volumes:
+  keycloak_data:
+  auditdex_data:

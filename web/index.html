@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f8ff">
+  <title>AuditDex AI — Agent Governance & Audit</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <a class="brand" href="#overview"><span class="brand-mark">ϟ</span><span><b>AuditDex AI</b><small>AI Agent Governance &amp; Audit</small></span></a>
+      <nav id="primary-nav" aria-label="Main navigation">
+        <a href="#overview" data-page="overview" class="active"><span>▦</span>Dashboard</a>
+        <a href="#agents" data-page="agents"><span>♧</span>Agents</a>
+        <a href="#actions" data-page="actions"><span>▤</span>Actions &amp; Logs</a>
+        <a href="#policies" data-page="policies"><span>▣</span>Policies</a>
+        <a href="#approvals" data-page="approvals"><span>☑</span>Approvals <em id="approval-count">0</em></a>
+        <a href="#incidents" data-page="incidents"><span>⚑</span>Incidents</a>
+        <a href="#reports" data-page="reports"><span>▧</span>Reports</a>
+        <a href="#integrations" data-page="integrations"><span>♧</span>Integrations</a>
+        <a href="#settings" data-page="settings"><span>⚙</span>Settings</a>
+      </nav>
+      <div class="tenant-card"><span class="tenant-avatar">AC</span><span><b id="tenant-name">Acme Corp</b><small>Workspace · <span id="tenant-id-label">acme</span></small></span><button id="tenant-change" title="Change workspace">⌄</button></div>
+    </aside>
+    <main class="main-area">
+      <header class="topbar">
+        <div class="top-copy"><span class="eyebrow">AI AGENT GOVERNANCE</span><span class="top-message">Monitor <i>•</i> Enforce <i>•</i> Audit <i>•</i> Secure AI Agents Across Your Enterprise</span></div>
+        <label class="search"><span>⌕</span><input id="global-search" placeholder="Search agents, actions, policies…" aria-label="Search"></label>
+        <button id="refresh" class="icon-button" title="Refresh data">↻</button><span class="avatar">RS</span>
+        <button id="auth-button" class="secondary">Sign in</button>
+      </header>
+      <div id="toast" class="toast" role="status"></div>
+      <section id="page-overview" class="page active">
+        <div id="overview-cards" class="metrics"></div>
+        <div class="overview-grid">
+          <article class="panel activity-panel"><div class="panel-head"><div><h2>Agent Activity Overview</h2><p>Decisions recorded in the last 24 hours</p></div><select id="activity-window" aria-label="Activity window"><option>24 hours</option></select></div><div id="activity-chart" class="chart-wrap"></div><div class="chart-legend"><span><i class="dot green"></i>Allowed</span><span><i class="dot red"></i>Blocked</span><span><i class="dot amber"></i>Pending</span><span><i class="dot blue"></i>Total actions</span></div></article>
+          <article class="panel violations-panel"><div class="panel-head"><div><h2>Policy Decisions</h2><p>Recent recorded outcomes</p></div><a href="#actions" class="text-link">Explore →</a></div><div id="decision-breakdown" class="decision-breakdown"></div></article>
+          <article class="panel coverage-panel"><div class="panel-head"><div><h2>Control Coverage</h2><p>Measured from gateway events · 24h</p></div><span id="coverage-pct" class="coverage-score">—</span></div><div id="coverage-content"></div><div class="integrity-line"><span class="pulse-dot"></span><span id="integrity-status">Checking audit chain…</span><a href="#reports">Verify</a></div></article>
+          <article class="panel recent-panel"><div class="panel-head"><div><h2>Recent Agent Actions</h2><p>Click an action to inspect its trace and evidence</p></div><a href="#actions" class="text-link">View all →</a></div><div id="recent-events" class="table-wrap"></div></article>
+          <article class="panel risky-panel"><div class="panel-head"><div><h2>Agents to Review</h2><p>Missing ownership or recent policy blocks</p></div><a href="#agents" class="text-link">View all →</a></div><div id="risky-agents" class="table-wrap"></div></article>
+          <article class="panel approvals-panel"><div class="panel-head"><div><h2>Approvals Queue</h2><p>Actions waiting for a decision</p></div><a href="#approvals" class="text-link">View all →</a></div><div id="approval-preview" class="approval-list"></div></article>
+        </div>
+        <article class="panel flow-panel"><div class="panel-head"><div><h2>How AuditDex AI Works</h2><p>Runtime mediation and evidence lifecycle</p></div><span class="mode-pill">Gateway enforcement path</span></div>
+          <div class="flow"><div class="flow-step"><b>1</b><strong>AI Agent</strong><small>Agent request<br>and identity</small></div><span class="flow-arrow">→</span><div class="flow-step blue-step"><b>2</b><strong>Gateway</strong><small>Intercepts tool calls<br>before execution</small></div><span class="flow-arrow">→</span><div class="flow-step red-step"><b>3</b><strong>Policy Engine</strong><small>Allow · Block<br>Require approval</small></div><span class="flow-arrow">→</span><div class="flow-step green-step"><b>4</b><strong>Tool / API</strong><small>Only permitted calls<br>reach integrations</small></div><span class="flow-arrow">→</span><div class="flow-step blue-step"><b>5</b><strong>Audit &amp; Monitoring</strong><small>Trace-linked decisions<br>and integrity evidence</small></div></div>
+          <p class="flow-note">The demo tool adapter is simulated. Connect a real MCP server or API and restrict direct credentials before relying on inline enforcement.</p>
+        </article>
+      </section>
+      <section id="page-agents" class="page"><div class="page-title"><div><span class="eyebrow">INVENTORY</span><h1>Agents</h1><p>Owners, environments, tools, and declared capabilities.</p></div><button class="primary" id="add-agent">＋ Register agent</button></div><div class="panel" id="agents-table"></div></section>
+      <section id="page-actions" class="page"><div class="page-title"><div><span class="eyebrow">RUNTIME EVIDENCE</span><h1>Actions &amp; Logs</h1><p>Search decisions, inspect payloads, and follow a trace.</p></div><button class="secondary" id="export-audit">↓ Export audit bundle</button></div><div class="filter-row"><select id="decision-filter"><option value="">All decisions</option><option>allowed</option><option>blocked</option><option>pending_approval</option><option>approved</option><option>rejected</option><option>observed</option></select><input id="action-search" placeholder="Filter by tool, action, or request…"><button class="secondary" id="apply-filter">Filter</button></div><div class="panel" id="actions-table"></div></section>
+      <section id="page-policies" class="page"><div class="page-title"><div><span class="eyebrow">DETERMINISTIC CONTROLS</span><h1>Policies</h1><p>Versioned rules evaluated at the gateway.</p></div><button class="primary" id="add-policy">＋ Create policy</button></div><div class="panel" id="policies-table"></div></section>
+      <section id="page-approvals" class="page"><div class="page-title"><div><span class="eyebrow">HUMAN REVIEW</span><h1>Approvals</h1><p>Review the action and its target before deciding.</p></div></div><div class="panel" id="approvals-table"></div></section>
+      <section id="page-incidents" class="page"><div class="page-title"><div><span class="eyebrow">INVESTIGATION</span><h1>Incidents</h1><p>Blocked and rejected actions with trace context.</p></div></div><div class="panel" id="incidents-table"></div></section>
+      <section id="page-reports" class="page"><div class="page-title"><div><span class="eyebrow">VERIFIABLE EVIDENCE</span><h1>Audit reports</h1><p>Export tenant-scoped records and verify the hash chain.</p></div><button class="primary" id="export-audit-2">↓ Export JSON</button></div><div class="report-cards"><article class="panel"><h2>Audit chain integrity</h2><p id="report-integrity">Loading…</p><button class="secondary" id="verify-chain">Verify now</button></article><article class="panel"><h2>Policy coverage definition</h2><p>Coverage is the share of action events in the selected 24-hour window that matched an explicit policy. It does not claim that every agent, tool, or network path is protected.</p></article></div></section>
+      <section id="page-integrations" class="page"><div class="page-title"><div><span class="eyebrow">CONNECTIVITY</span><h1>Integrations</h1><p>Gateway and downstream tool connections.</p></div></div><div class="integration-grid"><article class="panel"><span class="integration-icon">ϟ</span><h2>AuditDex Gateway</h2><p>Control-plane evaluation endpoint</p><span class="status-chip online">API connected</span></article><article class="panel"><span class="integration-icon">▤</span><h2>MCP tools</h2><p>Connect an MCP proxy adapter to mediate tool calls.</p><span class="status-chip needs-setup">Adapter not configured</span></article><article class="panel"><span class="integration-icon">🔑</span><h2>Credential broker</h2><p>Use gateway-held credentials and block direct egress paths.</p><span class="status-chip needs-setup">Not configured</span></article></div></section>
+      <section id="page-settings" class="page"><div class="page-title"><div><span class="eyebrow">WORKSPACE</span><h1>Settings</h1><p>Tenant scope and dashboard behavior.</p></div></div><article class="panel settings-panel"><label>Authorized tenant<input id="settings-tenant" value="" readonly></label><p>This scope is assigned by the verified identity-provider token and cannot be changed in the dashboard.</p></article></section>
+    </main>
+  </div>
+  <div id="drawer-backdrop" class="drawer-backdrop"><aside id="drawer" class="drawer" aria-label="Details"><button id="drawer-close" class="drawer-close">×</button><div id="drawer-content"></div></aside></div>
+  <dialog id="form-dialog"><form id="dialog-form" method="dialog"><div class="dialog-head"><h2 id="dialog-title">Create</h2><button class="drawer-close" value="cancel">×</button></div><div id="dialog-fields"></div><div class="dialog-actions"><button class="secondary" value="cancel">Cancel</button><button class="primary" id="dialog-submit" value="default">Save</button></div></form></dialog>
+  <script src="/assets/app.js?v=3" defer></script>
+</body></html>
